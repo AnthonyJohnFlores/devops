@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     stages {
-
         stage('Checkout') {
             steps {
+                // Esto descarga todo el repo, incluyendo la carpeta 'jenkins-release-demo'
                 git branch: 'main', url: 'https://github.com/AnthonyJohnFlores/devops.git'
             }
         }
@@ -24,7 +24,10 @@ pipeline {
         stage('Package Release') {
             steps {
                 sh 'echo "Generando artefacto release..."'
-                sh 'zip -r release.zip ./src'
+                
+                // CAMBIO CLAVE:
+                // Le indicamos la ruta completa: carpeta_principal/carpeta_src
+                sh 'zip -r release.zip ./jenkins-release-demo/src'
             }
         }
 
@@ -37,6 +40,7 @@ pipeline {
 
     post {
         success {
+            // El zip se crea en la raíz, así que esto sigue funcionando igual
             archiveArtifacts artifacts: 'release.zip', fingerprint: true
             echo "Release generado exitosamente."
         }
