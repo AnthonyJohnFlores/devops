@@ -33,7 +33,7 @@ pipeline {
 
         stage('Publish Artifact') {
             steps {
-                sh 'echo "Publicando artefacto Prueba 2..."'
+                sh 'echo "Publicando artefacto Prueba 3..."'
             }
         }
     }
