@@ -3,3 +3,4 @@ Este paquete contiene:
 - Jenkinsfile
 - Script deploy.sh
 - Instrucciones para integración con GitHub
+- Prueba para ver automatizacion
