@@ -26,7 +26,7 @@ pipeline {
                 sh 'echo "Generando artefacto release..."'
                 
                 // CAMBIO CLAVE:
-                // Le indicamos la ruta completa: carpeta_principal/carpeta_src
+                // Se le indica la ruta completa: carpeta_principal/carpeta_src
                 sh 'zip -r release.zip ./jenkins-release-demo/src'
             }
         }
