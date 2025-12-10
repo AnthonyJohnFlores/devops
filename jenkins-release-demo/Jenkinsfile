@@ -1,51 +1,79 @@
 pipeline {
     agent any
 
+    // Definimos variables globales para el pipeline
+    environment {
+        APP_VERSION = "1.0.${BUILD_NUMBER}" // El número de build de Jenkins
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                // Esto descarga todo el repo, incluyendo la carpeta 'jenkins-release-demo'
+                echo "Descargando versión del repositorio..."
                 git branch: 'main', url: 'https://github.com/AnthonyJohnFlores/devops.git'
+            }
+        }
+
+        stage('Code Analysis') { // Paso simulado
+            steps {
+                echo "Analizando calidad del código con SonarQube (Simulado)..."
+                sleep 2 // Pausa de 2 segundos
+                echo "Calidad del código: APROBADA"
             }
         }
 
         stage('Build') {
             steps {
-                sh 'echo "Compilando aplicación..."'
+                echo "Compilando aplicación versión ${APP_VERSION}..."
+                // Simulamos que se crea un binario o ejecutable
+                sh 'echo "Binario compilado" > ./jenkins-release-demo/src/app.bin'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'echo "Ejecutando pruebas..."'
+                echo "Ejecutando pruebas unitarias..."
+                sleep 2
+                echo "Tests: 100% Pasados."
             }
         }
 
         stage('Package Release') {
             steps {
-                sh 'echo "Generando artefacto release..."'
+                echo "Generando paquete release-v${APP_VERSION}.zip..."
                 
-                // CAMBIO CLAVE:
-                // Se le indica la ruta completa: carpeta_principal/carpeta_src
-                sh 'zip -r release.zip ./jenkins-release-demo/src'
+                // Usamos la variable de entorno para el nombre del archivo
+                // Comprimimos el contenido de la carpeta src
+                sh "zip -r release-v${APP_VERSION}.zip ./jenkins-release-demo/src"
+            }
+        }
+
+        stage('Deploy Approval') { // NUEVO:Demo de despliegue a produccion
+            steps {
+                script {
+                    // Esto pausará el pipeline hasta que tú le des clic en la web
+                    input message: '¿Deseas desplegar esta versión a Producción?', ok: 'Desplegar'
+                }
             }
         }
 
         stage('Publish Artifact') {
             steps {
-                sh 'echo "Publicando artefacto Prueba 3..."'
+                echo "Publicando artefacto release-v${APP_VERSION}.zip a Producción..."
+                sleep 2
+                echo "¡Despliegue finalizado con éxito!"
             }
         }
     }
 
     post {
         success {
-            // El zip se crea en la raíz, así que esto sigue funcionando igual
-            archiveArtifacts artifacts: 'release.zip', fingerprint: true
-            echo "Release generado exitosamente."
+            // Guardamos el artefacto con el nombre dinámico
+            archiveArtifacts artifacts: "release-v${APP_VERSION}.zip", fingerprint: true
+            echo "Pipeline finalizado. Artefacto v${APP_VERSION} archivado."
         }
         failure {
-            echo "Falló el release."
+            echo "El pipeline falló. Revisar logs."
         }
     }
 }
