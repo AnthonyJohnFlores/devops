@@ -71,9 +71,11 @@ pipeline {
             // Guardamos el artefacto con el nombre dinámico
             archiveArtifacts artifacts: "release-v${APP_VERSION}.zip", fingerprint: true
             echo "Pipeline finalizado. Artefacto v${APP_VERSION} archivado."
+            echo "Este es el examen final."
         }
         failure {
             echo "El pipeline falló. Revisar logs."
         }
     }
 }
+
